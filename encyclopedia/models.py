@@ -5,8 +5,9 @@ from . import util
 class wikiPage(models.Model):
     def __init__(self, title):
         for pages in util.list_entries():
-            if pages == title:
+            if pages.lower == title.lower:
                 self.title = pages
+                break
             else:
                 self.title = False
         self.body = util.get_entry(self.title)

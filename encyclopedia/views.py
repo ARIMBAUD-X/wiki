@@ -2,20 +2,19 @@ from django.shortcuts import render, HttpResponse
 
 from . import util, models
 
-def index(request):
-    return render(request, "encyclopedia/index.html", {
+def index(request):                                             
+    return render(request, "encyclopedia/index.html", {         # goto index
         "entries": util.list_entries()
     })
 
-def page(request, title):
+def page(request, title):                                       # attempt to display a new page
     newpage = models.wikiPage(title)
     if newpage.title != False:
         return render(request, "encyclopedia/page.html", {
            "pageData": newpage.body,
            "title": newpage.title
         })
-    else:
-        print (title)
+    elif newpage.title == False:
         return render(request, "encyclopedia/notfound.html",{
             "title": title
         })
