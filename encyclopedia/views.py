@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 from .models import wikiPage
 from . import util
 
@@ -10,8 +11,9 @@ def index(request):
 def page(request, title):                                       # attempt to display a new page
     newpage = wikiPage(title)  
     if newpage.title == False:
-        return render(request, "encyclopedia/notfound.html", {
-            "title": title
+        return render(request, "encyclopedia/error.html", {
+            "title": title,
+            "errortype": "notfound"
         })           
     else:
         return render(request, "encyclopedia/page.html", {
@@ -55,3 +57,30 @@ def search(request):
             "title": query,
             "entries": util.list_entries()
         })"""
+
+def new(request):
+    if request.method =="POST":
+        form = request.POST
+        if util.get_entry(form["newpagetitle"]) == None:
+            util.save_entry(form["newpagetitle"], form["newpagedata"])
+            return redirect (f"/wiki/{form['newpagetitle']}")
+        elif util.get_entry(form["newpagetitle"]) != None:
+            return render(request, "encyclopedia/error.html", {
+                "title": form["newpagetitle"],
+                "errortype": "pageexists"
+            })
+    return render(request, "encyclopedia/new.html")
+
+def edit(request, title):
+    if request.method == 'POST':
+        print (request.POST)
+        
+        ## append edits
+    else: ## here first time
+        return render (request, "encyclopedia/edit.html", {
+            "title": title,
+            "pagedata": util.get_entry(title)
+        })
+
+def random(request):
+    return render(request, "encyclopedia/random.html")
