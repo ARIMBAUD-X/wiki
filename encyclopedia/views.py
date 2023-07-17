@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django import forms
 from .models import wikiPage
+from random import randint
 from . import util
 
 
@@ -94,4 +95,12 @@ def edit(request, title):
         })
 
 def random(request):
+    pagelist = util.list_entries()
+    a = len(pagelist)
+    print (a)
+    b = randint(0, a-1) # len is 1-to-n, [b] is 0-to-n
+    print (b)
+    choice = (pagelist[b])
+    print (choice)
+    return HttpResponseRedirect(choice)
     return render(request, "encyclopedia/random.html")
