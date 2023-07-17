@@ -6,7 +6,10 @@
 
 {% block body %}
     <h1>Edit "{{ title }}"</h1>
-{% csrf_token %}
-<code><textarea id="editpagedata" name="editpagedata" placeholder="Enter MarkDown... ">{{ pagedata }}</textarea></code>
-<button type="submit">Save</button>
+    {% csrf_token %}
+<form action="{% url 'edit' title %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" >Save</button>
+</form>
 {% endblock %}

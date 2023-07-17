@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
+from django import forms
 from .models import wikiPage
 from . import util
+
+
+class editForm (forms.Form):
+    prepopulatedText = forms.CharField(label='Make your edits', widget=forms.Textarea())
 
 def index(request):                                             
     return render(request, "encyclopedia/index.html", {         # goto index
@@ -73,13 +78,19 @@ def new(request):
 
 def edit(request, title):
     if request.method == 'POST':
-        print (request.POST)
-        
-        ## append edits
+        form = editForm(request.POST)
+        if form.is_valid():
+            newedit = form.cleaned_data['prepopulatedText'] # no longer prepopulated
+            newedit = '\r\n'.join([x for x in newedit.splitlines() if x.strip()]) # strips python-added newlines
+            util.save_entry(title, newedit)
+            return HttpResponseRedirect(f"/wiki/{title}")
     else: ## here first time
+        newform = editForm()
+        newform.fields['prepopulatedText'].initial = util.get_entry(title)
         return render (request, "encyclopedia/edit.html", {
             "title": title,
-            "pagedata": util.get_entry(title)
+            "pagedata": util.get_entry(title),
+            "form": newform
         })
 
 def random(request):
