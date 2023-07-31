@@ -103,4 +103,3 @@ def random(request):
     choice = (pagelist[b])
     print (choice)
     return HttpResponseRedirect(choice)
-    return render(request, "encyclopedia/random.html")
